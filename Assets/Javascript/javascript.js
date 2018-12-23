@@ -1,13 +1,13 @@
+// Setting global variables
 var trainName = "";
 var destination = "";
 var frequency = "";
 var nextArrival = "";
 var minutesAway = "";
 var firstTrain = "";
-var currentTime = moment().format('hh:mm');
+var currentTime = moment().format('HH:mm');
 
-    
-
+// Firebase setup
 var config = {
     apiKey: "AIzaSyDBAtq5uQ2f0LouJtAilKQGnjMed_OqcWo",
     authDomain: "byrdman-train-schedule.firebaseapp.com",
@@ -21,14 +21,19 @@ firebase.initializeApp(config);
 
 var database = firebase.database();
 
+
 $(document).ready(function () {
-    // console.log(currentTime);
+    // Displays current time
+    $("#current-time").text("Current time: " + currentTime);
     $("#submit-button").on("click", function() {
+        // When the submit button is clicked, the following code is run
         event.preventDefault();
+        // Obtaining the values supplied by the user and setting them to blank global variables
         trainName = $("#train-name").val();
         destination = $("#destination").val();
         firstTrain = $("#first-train").val();
         frequency = $("#frequency").val();
+        // Math to determine next train's arrival time along with how long in minutes until that arrival time
         var firstTimeConverted = moment(firstTrain, "HH:mm");
         var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
         var tRemainder = diffTime % frequency;
@@ -47,6 +52,7 @@ $(document).ready(function () {
     });
 });
 
+// When a child is added, create and append new div with the information from firebase
 database.ref().on("child_added", function(response){
     $("#train-name-new").append("<div>" + response.val().train);
     $("#destination-new").append("<div>" + response.val().destination);
